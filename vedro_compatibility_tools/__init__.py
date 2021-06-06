@@ -36,4 +36,4 @@ class SchemaValidator:
 
 
 __all__ = ("SchemaValidator", "patch_schema", "patch_config",)
-__version__ = "0.0.1"
+__version__ = "0.0.2"

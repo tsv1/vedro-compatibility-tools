@@ -1,0 +1,4 @@
+blahblah<0.7
+valeera<0.7
+district42<0.7
+vedro<=1.0.4
