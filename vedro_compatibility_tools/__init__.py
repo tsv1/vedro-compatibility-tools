@@ -2,8 +2,8 @@ import vedro
 from blahblah import Substitutor
 from district42 import SchemaType
 from vedro._core import ExcInfo
-from vedro._events import StepFailEvent
-from vedro.plugins import Plugin
+from vedro.events import StepFailedEvent
+from vedro import Plugin
 
 
 def validator_factory():
@@ -45,9 +45,9 @@ class SchemaValidationPlugin(Plugin):
         self._validator = validator
 
     def subscribe(self, dispatcher):
-        dispatcher.listen(StepFailEvent, self.on_step_fail)
+        dispatcher.listen(StepFailedEvent, self.on_step_failed)
 
-    def on_step_fail(self, event):
+    def on_step_failed(self, event):
         errors = self._validator.errors()
         if len(errors) == 0:
             return
