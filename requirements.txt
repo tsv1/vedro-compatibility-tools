@@ -1,4 +1,4 @@
-blahblah<0.7
-valeera<0.7
-district42<0.7
-vedro<1.2
+blahblah<1.0
+valeera<1.0
+district42<1.0
+vedro>=1.2,<2.0

@@ -1,62 +1,47 @@
-import vedro
+from typing import Optional
+
 from blahblah import Substitutor
 from district42 import SchemaType
-from vedro._core import ExcInfo
-from vedro.events import StepFailedEvent
-from vedro import Plugin
+from valeera import AbstractFormatter, AbstractValidator, Formatter, Validator
+from vedro._core import Dispatcher, Plugin
+from vedro.events import ExceptionRaisedEvent
 
 
-def validator_factory():
-    from valeera import Formatter, Validator
-    return Validator(Formatter())
-
-
-def patch_schema(validator=None, substitutor=None):
+def register(validator: Optional[AbstractValidator] = None,
+             substitutor: Optional[Substitutor] = None) -> None:
     if validator is None:
-        validator = validator_factory()
+        validator = Validator(Formatter())
     if substitutor is None:
         substitutor = Substitutor()
-    SchemaType.__eq__ = lambda a, b: validator.validate(b, a)
+    SchemaType.__eq__ = lambda a, b: validator.validate(b, a).passes()
     SchemaType.__mod__ = lambda self, val: self.accept(substitutor, val)
 
 
-def patch_config(config):
-    vedro.config = config
+class SchemaValidator(Validator):
+    def __init__(self, formatter: Optional[AbstractFormatter] = None) -> None:
+        super().__init__(formatter if formatter else Formatter())
 
-
-class SchemaValidator:
-    def __init__(self, factory=validator_factory):
-        self._factory = factory
-        self._validator = factory()
-
-    def validate(self, actual, expected):
-        self._validator.validate(actual, expected)
-        return self._validator.passes()
-
-    def errors(self):
-        return self._validator.errors()
-
-    def reset(self):
-        self._validator = self._factory()
+    def reset(self) -> None:
+        self._errors = []
 
 
 class SchemaValidationPlugin(Plugin):
-    def __init__(self, validator):
+    def __init__(self, validator: SchemaValidator) -> None:
         self._validator = validator
 
-    def subscribe(self, dispatcher):
-        dispatcher.listen(StepFailedEvent, self.on_step_failed)
+    def subscribe(self, dispatcher: Dispatcher) -> None:
+        dispatcher.listen(ExceptionRaisedEvent, self.on_excpetion_raised)
 
-    def on_step_failed(self, event):
+    def on_excpetion_raised(self, event: ExceptionRaisedEvent) -> None:
         errors = self._validator.errors()
         if len(errors) == 0:
             return
         self._validator.reset()
         message = "\n - " + "\n - ".join(errors)
         exception = AssertionError(message)
-        exc_info = ExcInfo(type(exception), exception, event.step_result.exc_info.traceback)
-        event.step_result.set_exc_info(exc_info)
+        event.exc_info.value = exception
+        event.exc_info.type = type(exception)
 
 
-__all__ = ("SchemaValidator", "SchemaValidationPlugin", "patch_schema", "patch_config",)
-__version__ = "0.1.0"
+__all__ = ("SchemaValidator", "SchemaValidationPlugin", "register",)
+__version__ = "0.2.0"
