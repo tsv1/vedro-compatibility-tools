@@ -33,6 +33,8 @@ class SchemaValidationPlugin(Plugin):
         dispatcher.listen(ExceptionRaisedEvent, self.on_excpetion_raised)
 
     def on_excpetion_raised(self, event: ExceptionRaisedEvent) -> None:
+        if event.exc_info.type is not AssertionError:
+            return
         errors = self._validator.errors()
         if len(errors) == 0:
             return
@@ -44,4 +46,4 @@ class SchemaValidationPlugin(Plugin):
 
 
 __all__ = ("SchemaValidator", "SchemaValidationPlugin", "register",)
-__version__ = "0.1.0"
+__version__ = "0.1.1"
