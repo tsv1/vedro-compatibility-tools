@@ -46,4 +46,4 @@ class SchemaValidationPlugin(Plugin):
 
 
 __all__ = ("SchemaValidator", "SchemaValidationPlugin", "register",)
-__version__ = "0.1.1"
+__version__ = "0.1.2"
