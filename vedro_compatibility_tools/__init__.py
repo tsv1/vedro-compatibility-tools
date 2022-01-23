@@ -3,7 +3,7 @@ from typing import Optional
 from blahblah import Substitutor
 from district42 import SchemaType
 from valeera import AbstractFormatter, AbstractValidator, Formatter, Validator
-from vedro._core import Dispatcher, Plugin
+from vedro.core import Dispatcher, Plugin
 from vedro.events import ExceptionRaisedEvent
 
 
