@@ -4,12 +4,12 @@
 
 ```python
 import vedro
-from vedro_compatibility_tools import register, SchemaValidationPlugin, SchemaValidator
+import vedro_compatibility_tools as v
 
-if __name__ == "__main__":
-    validator = SchemaValidator()
-    register(validator)
+class Config(vedro.Config):
 
-    vedro.run(plugins=[SchemaValidationPlugin(validator)])
+    class Plugins(vedro.Config.Plugins):
 
+        class SchemaValidator(v.SchemaValidator):
+            enabled = True
 ```
