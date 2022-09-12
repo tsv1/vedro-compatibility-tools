@@ -1,4 +1,4 @@
 blahblah<1.0
 valeera<1.0
 district42<1.0
-vedro>=1.5,<2.0
+vedro>=1.5,<2.0,!=1.7.0
